@@ -1,0 +1,37 @@
+import vk_api
+from random import choice, randrange
+from vk_api.longpoll import VkLongPoll, VkEventType
+
+TOKEN = "vk1.a.V2y0PmGTvJ4XuZAqTMr0CZsUTNb81U4gsS-Cv_HDQ_oGwImGWSg8n8s18XZ5d9WH47HHgSuqRaOhJV6oh8NkRpuE--dciAsO-NElQFc-DUoczKLmH-lt4yd1y1yr_rD72LXaISKMK1UZThbr-PctKSMLtfBibTe7zMkFTYR2M2lSCU_T3RvMPa85Auz62WCQrw0BeUMoltuh8JtM5oVXCg"
+vk_session = vk_api.VkApi(token=TOKEN)
+longpool = VkLongPoll(vk_session)
+vk = vk_session.get_api()
+
+vars = ["камень", "ножницы", "бумага"]
+for event in longpool.listen():
+    if event.type == VkEventType.MESSAGE_NEW and event.text and event.to_me and event.text.lower() in vars:
+        if event.from_user:
+            bot = choice(vars)
+            vk.messages.send(user_id=event.user_id, message=bot, random_id=randrange(1, 10000))
+            if bot == "ножницы":
+                if event.text.lower() == "ножницы":
+                    user = "ничья"
+                elif event.text.lower() == "камень":
+                    user = "ты победил"
+                else:
+                    user = "ты проиграл"
+            elif bot == 'бумага':
+                if event.text.lower() == "ножницы":
+                    user = "ты победил"
+                elif event.text.lower() == "камень":
+                    user = "ты проиграл"
+                else:
+                    user = "ничья"
+            else:
+                if event.text.lower() == "ножницы":
+                    user = ""
+                elif event.text.lower() == "камень":
+                    user = "ничья"
+                else:
+                    user = "ты победил"
+            vk.messages.send(user_id=event.user_id, message=user, random_id=randrange(1,1000))
